@@ -1,0 +1,12 @@
+.list {
+
+  position: relative;
+  top: 4em;
+
+}
+
+.search {
+
+  position: relative;
+  bottom: 3em;
+}
