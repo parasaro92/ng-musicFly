@@ -11,11 +11,11 @@ myApp.config(['$routeProvider','$httpProvider', function($routeProvider, $httpPr
     }).
     when('/new', {
       templateUrl: 'pages/new-song.html',
-      controller: 'MusicCtrl',
-      controllerAs: 'music'
+      controller: 'GenreCtrl',
+      controllerAs: 'genre'
     }).
-    when('/edit/:id', {
-      templateUrl: 'pages/new-song.html',
+    when('/:id', {
+      templateUrl: 'pages/music-list.html',
       controller: 'MusicCtrl',
       controllerAs: 'music'
     }).
