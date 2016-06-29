@@ -35,7 +35,8 @@ myApp.controller('MusicCtrl', function(MusicService, $scope, $timeout, $mdSidena
 
         $scope.genres = ['bollywood','jazz'];
 
-        $scope.api = "http://104.197.128.152:8000/v1/tracks/" + $routeParams.id; 
+        var id = $routeParams.id
+        $scope.api = "http://104.197.128.152:8000/v1/tracks/" + id; 
 
         $scope.createTrack = function(track){
             var createTrackObj = {
@@ -61,6 +62,13 @@ myApp.controller('MusicCtrl', function(MusicService, $scope, $timeout, $mdSidena
         console.log(err);
     });
 
+    $scope.openSidebar = function(){
+        $mdSidenav('left').open();
+    }
+
+    $scope.closeSidebar = function(){
+        $mdSidenav('left').close();
+    }
 });
 
 myApp.service('MusicService', function($resource, $q){
