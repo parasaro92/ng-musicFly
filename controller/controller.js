@@ -24,40 +24,38 @@ myApp.controller('MusicCtrl', function(MusicService, $scope, $timeout, $mdSidena
     var promiseRsp = MusicService.getMusic();
     promiseRsp.then(function(data){
         // console.log(data);
-        // $scope.genres = data.genres[0];
         $scope.musics = data.results;
-        console.log($scope.musics);
+        // console.log($scope.musics);
         angular.forEach(data.results, function(value, key) {
             //console.log(value.rating);
             $scope.rating = value.rating;
-            // console.log(music.rating);
             $scope.max = 5;
             $scope.isReadonly = true;
         });
 
-        $scope.genres = ['bollywood','jazz'];
+        $scope.genres = ['bollywood','jazz','tap','metakai','green','sufi','pop','indi popiii','khushwaha','New Gen','ssss','Trancee','hip hop','classical','india jeet'];
 
         var id = $routeParams.id
         $scope.api = "http://104.197.128.152:8000/v1/tracks/" + id; 
 
         $scope.createTrack = function(track){
-            var createTrackObj = {
-                title: track.title,
-                rating: track.rating,
-                genres: track.genre 
-            };
-            if(angular.isDefined($routeParams.id)){
-                $http.put($scope.api, createTrackObj).then(function(response){
-                    console.log(response);
-                });
-            }else {
-                $http.post("http://104.197.128.152:8000/v1/tracks",createTrackObj).then(function(response){
-                    console.log(response);
-                    $scope.musics.push(createTrackObj);
-                });
-                
-            }
-
+          var createTrackObj = {
+              title: track.title,
+              rating: track.rating,
+              genres: track.genre 
+          };
+          if(angular.isDefined($routeParams.id)){
+              $http.put($scope.api, createTrackObj).then(function(response){
+                  console.log(response);
+              });
+          }else {
+              $http.post("http://104.197.128.152:8000/v1/tracks",createTrackObj).then(function(response){
+                  console.log(response);
+                  $scope.musics.push(createTrackObj);
+              });
+              
+          }
+          $scope.closeSidebar();
         }
 
     },function(err){
@@ -102,45 +100,68 @@ myApp.controller('GenreCtrl', function(MusicService, $scope, $mdSidenav, $http, 
 
   var promiseRsp = MusicService.getGenre();
     promiseRsp.then(function(data){
-      // $scope.genres = data.genres[0];
-      // console.log($scope.genres);
-      $scope.genres = data;
-      // console.log($scope.genres);
-      angular.forEach(data, function(value, key) {
-          //console.log(value.rating);
-          $scope.name = value.name;
-          console.log($scope.name);
-      });
+      console.log(data);
+      $scope.genres = data.results;
+      // angular.forEach(data.results, function(value, key) {
+      //     $scope.name = value.name;
+      //     console.log($scope.name);
+      // });
 
       var id = $routeParams.id
         $scope.api = "http://104.197.128.152:8000/v1/genres/" + id; 
 
-        $scope.createTrack = function(genre){
-            var createTrackObj = {
-                name: genre.name,
-            };
-            if(angular.isDefined($routeParams.id)){
-                $http.put(api, createTrackObj).then(function(response){
-                    console.log(response);
-                });
-            }else {
-                $http.post("http://104.197.128.152:8000/v1/genres",createTrackObj).then(function(response){
-                    console.log(response);
-                    $scope.genres.push(createTrackObj);
-                });
-                
-            }
+        $scope.createGenre = function(genre){
+          var createTrackObj = {
+              name: genre.name,
+          };
+          if(angular.isDefined($routeParams.id)){
+              $http.put($scope.api, createTrackObj).then(function(response){
+                  console.log(response);
+              });
+          }else {
+              $http.post("http://104.197.128.152:8000/v1/genres",createTrackObj).then(function(response){
+                  console.log(response);
+                  $scope.genres.push(createTrackObj);
+              });
+              
+          }
+          $scope.closeSidebar();
         }
     },function(err){
         console.log(err);
     });
 
- $scope.openSidebar = function(){
-        $mdSidenav('left').open();
+    $scope.openSidebar = function(){
+      $mdSidenav('left').open();
     }
 
     $scope.closeSidebar = function(){
-        $mdSidenav('left').close();
+      $mdSidenav('left').close();
+    }
+
+    $scope.editGenre = function(id){
+      $scope.editing = true;
+      $scope.openSidebar();
+      MusicService.getGenreId(id).then(function(result){
+        $scope.genre = result;
+      },function(err){
+        console.log(err);
+      });
+    }
+
+    $scope.editSave = function(genre){
+      $scope.editing = false;
+      var id = genre.id;
+      MusicService.updateGenre(genre).then(function(result){
+        MusicService.getGenreId().then(function(res){
+          $scope.genres = res.results;
+        },function(err){
+          console.log(err);
+        });
+      },function(err){
+        console.log(err);
+      })
+      $scope.closeSidebar();
     }
 });
 
@@ -154,10 +175,9 @@ myApp.service('MusicService', function($http, $resource, $q){
       method: 'GET',
       url: "http://104.197.128.152:8000/v1/tracks"
     });
-    // var rsp = resObj.get();
     var deferred = $q.defer();
     resObj.success(function(data){
-        console.log(data);
+        // console.log(data);
         // angular.forEach(data, function(value, key) {
         //     //console.log(value.rating);
         //     vm.rate = value.rating;
@@ -186,12 +206,7 @@ myApp.service('MusicService', function($http, $resource, $q){
     var deferred = $q.defer();
     resObj.success(function(data){
         console.log(data);
-        // angular.forEach(data, function(value, key) {
-        //     //console.log(value.rating);
-        //     vm.rate = value.rating;
-        //     vm.max = 5;
-        //     vm.isReadonly = true;
-        // });
+
         var len = data.length;
         for(var i=0; i<len; i++){
             ObjList = data[i];
@@ -214,12 +229,6 @@ myApp.service('MusicService', function($http, $resource, $q){
     var deferred = $q.defer();
     resObj.success(function(data){
         console.log(data);
-        // angular.forEach(data, function(value, key) {
-        //     //console.log(value.rating);
-        //     vm.rate = value.rating;
-        //     vm.max = 5;
-        //     vm.isReadonly = true;
-        // });
         var len = data.length;
         for(var i=0; i<len; i++){
             ObjList = data[i];
@@ -232,25 +241,66 @@ myApp.service('MusicService', function($http, $resource, $q){
     return deferred.promise;
   }
 
-  vm.getGenre = function(){
-
-    var resObj =  $resource('http://104.197.128.152:8000/v1/genres');
-    var rsp = resObj.query();
+  vm.getGenre = function() {
+    
+    var resObj =  $http({
+      method: 'GET',
+      url: "http://104.197.128.152:8000/v1/genres"
+    });
     var deferred = $q.defer();
-    rsp.$promise.then(function(data){
-        // console.log(data);
-        // angular.forEach(data, function(value, key) {
-        //     //console.log(value.rating);
-        //     vm.rate = value.rating;
-        //     vm.max = 5;
-        //     vm.isReadonly = true;
-        // });
+    resObj.success(function(data){
+        console.log(data);
         var len = data.length;
         for(var i=0; i<len; i++){
             ObjList = data[i];
         }
         deferred.resolve(data);
-    },function(err) {
+    });
+    resObj.error(function(err) {
+        deferred.reject(err);
+    });
+    return deferred.promise;
+  }
+
+  vm.getGenreId = function(id) {
+    
+    var resObj =  $http({
+      method: 'GET',
+      url: "http://104.197.128.152:8000/v1/genres/" + id
+    });
+    var deferred = $q.defer();
+    resObj.success(function(data){
+        console.log(data);
+        
+        var len = data.length;
+        for(var i=0; i<len; i++){
+            ObjList = data[i];
+        }
+        deferred.resolve(data);
+    });
+    resObj.error(function(err) {
+        deferred.reject(err);
+    });
+    return deferred.promise;
+  }
+
+  vm.updateGenre = function(genre) {
+    
+    var resObj =  $http({
+      method: 'PUT',
+      url: "http://104.197.128.152:8000/v1/genres/" + genre.id
+    });
+    var deferred = $q.defer();
+    resObj.success(function(data){
+        console.log(data);
+  
+        var len = data.length;
+        for(var i=0; i<len; i++){
+            ObjList = data[i];
+        }
+        deferred.resolve(data);
+    });
+    resObj.error(function(err) {
         deferred.reject(err);
     });
     return deferred.promise;

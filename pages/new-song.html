@@ -3,7 +3,7 @@
     <p><strong>ngMusic</strong></p>
 
     <md-button ng-click="openSidebar()">
-      New Track
+      New Genre
     </md-button>
   </div>
 </md-toolbar>
@@ -19,13 +19,15 @@
         <label for="genre">Genre</label>
         <input type="text" id="genre" ng-model="genre.name" md-autofocus>
       </md-input-container>
-      <md-button ng-click="createTrack(genre)" class="md-primary">
-      Save
-      </md-button>
-      <md-button ng-click="closeSidebar()" class="md-warn">
-      Cancel
-      </md-button>
-
+      <md-button ng-if="!editing" ng-click="createGenre(genre)" class="md-primary">
+          Save
+        </md-button>
+        <md-button ng-click="editSave(genre)" ng-if="editing" class="md-primary">
+          Save Edit
+        </md-button>
+        <md-button ng-click="closeSidebar()" class="md-warn">
+          Cancel
+        </md-button>
       <!-- <pre>{{ item | json }}</pre> -->
     </form> 
   </md-content> 
@@ -44,7 +46,7 @@
     <input type="text" class="form-control search" placeholder="Search Genre" ng-model="search.name">  
   
   <div class="list-group" ng-repeat="n in genres | filter: search">
-    <a href="#/" class="list-group-item"> 
+    <a ng-click="editGenre(n.id)" class="list-group-item"> 
       <!-- <div class="row"> -->
       {{n.name}} 
         
