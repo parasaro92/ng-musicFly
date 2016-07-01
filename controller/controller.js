@@ -52,6 +52,7 @@ myApp.controller('MusicCtrl', function(MusicService, $scope, $timeout, $mdSidena
               $http.post("http://104.197.128.152:8000/v1/tracks",createTrackObj).then(function(response){
                   console.log(response);
                   $scope.musics.push(createTrackObj);
+                  // $scope.musics = {};
               });
               
           }
@@ -86,6 +87,7 @@ myApp.controller('MusicCtrl', function(MusicService, $scope, $timeout, $mdSidena
       MusicService.updateMusic(track).then(function(result){
         MusicService.getMusic().then(function(res){
           $scope.musics = res.results;
+          // $scope.musics = {};
         },function(err){
           console.log(err);
         });
